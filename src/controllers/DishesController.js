@@ -2,15 +2,16 @@ const knex = require("../database/knex");
 
 class DishesController {
   async create(req, res) {
-    const { name, price, category, ingre_name } = req.body;
+    const { name, price, description, category, ingre_name } = req.body;
 
-    if (!name || !price || !category) {
+    if (!name || !description || !price || !category) {
       throw Error("Preencha todos os campos");
     }
 
     const [dish_id] = await knex("dishes").insert({
       // ao criar o prato me retorna o id dele
       name,
+      description,
       price,
       category,
     });
@@ -48,9 +49,15 @@ class DishesController {
     return res.json(allDishesWithIngre);
   }
 
+  async index(req, res) {
+    const allDishes = await knex("dishes");
+
+    return res.json(allDishes);
+  }
+
   async update(req, res) {
     const { id } = req.params;
-    const { name, price, category, ingre_name } = req.body;
+    const { name, price, description, category, ingre_name } = req.body;
 
     const dish = await knex("dishes").where({ id }).first();
 
@@ -58,6 +65,7 @@ class DishesController {
       .where({ id })
       .update({
         name: name ?? dish.name,
+        description: description ?? dish.description,
         price: price ?? dish.price,
         category: category ?? dish.category,
       });
@@ -76,6 +84,14 @@ class DishesController {
     }
 
     return res.json({ message: "Prato atualizado" });
+  }
+
+  async delete(req, res) {
+    const { id } = req.params;
+
+    await knex("dishes").where({ id }).first().del();
+
+    return res.json({ message: "Prato excluido" });
   }
 }
 
