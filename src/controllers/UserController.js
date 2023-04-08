@@ -9,6 +9,12 @@ class UserController {
       throw AppError("Preencha todos os campos");
     }
 
+    const user = await knex("users").where({ email }).first();
+
+    if (user) {
+      throw Error("Esse email já existe");
+    }
+
     const hashPass = await hash(password, 8);
 
     await knex("users").insert({ name, email, password: hashPass });
