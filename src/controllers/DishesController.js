@@ -1,9 +1,14 @@
 const knex = require("../database/knex");
+const DiskStorage = require("../providers/DiskStorage");
 
 class DishesController {
   async create(req, res) {
     const { name, price, description, category, ingre_name } = req.body;
+
+    const image = req.file.filename;
     const id = req.user.id;
+
+    const diskStorage = new DiskStorage();
 
     const user = await knex("users").where({ id }).first();
 
@@ -12,15 +17,18 @@ class DishesController {
       throw Error("Usuario sem permissão");
     }
 
-    if (!name || !description || !price || !category) {
+    if (!name || !description || !price || !category || !image) {
       throw Error("Preencha todos os campos");
     }
+
+    const filename = await diskStorage.saveFile(image);
 
     const [dish_id] = await knex("dishes").insert({
       // ao criar o prato me retorna o id dele
       name,
       description,
       price,
+      image: filename,
       category,
     });
 
@@ -34,7 +42,7 @@ class DishesController {
 
     await knex("ingredients").insert(ingredientsInsert);
 
-    return res.json({ message: "Prato criado" });
+    return res.json({ message: "Prato adicionado" });
   }
 
   async show(req, res) {
@@ -117,13 +125,19 @@ class DishesController {
     const { dish_id } = req.params;
     const id = req.user.id;
 
+    const diskStorage = new DiskStorage();
+
     const user = await knex("users").where({ id }).first();
+
+    const dishes = await knex("dishes").where({ id }).first();
 
     if (user.is_admin === 0) {
       throw Error("Usuario sem permissão");
     }
 
-    await knex("dishes").where({ id: dish_id }).first().del();
+    await diskStorage.deleteFIle(dishes.image);
+
+    await knex("dishes").where({ id: dish_id }).del();
 
     return res.json({ message: "Prato excluido" });
   }
