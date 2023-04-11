@@ -23,9 +23,10 @@ class UserController {
   }
 
   async show(req, res) {
-    const users = await knex("users");
+    const { id } = req.params;
+    const [user] = await knex("users").where({ id });
 
-    return res.json(users);
+    return res.json(user);
   }
 }
 

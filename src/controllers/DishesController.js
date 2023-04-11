@@ -5,6 +5,8 @@ class DishesController {
   async create(req, res) {
     const { name, price, description, category, ingre_name } = req.body;
 
+    let ingre_nameConvert = JSON.parse(ingre_name);
+
     const image = req.file.filename;
     const id = req.user.id;
 
@@ -33,7 +35,7 @@ class DishesController {
     });
 
     // pegando o array e inserindo o id do prato + cada item do array
-    const ingredientsInsert = ingre_name.map((ingre) => {
+    const ingredientsInsert = ingre_nameConvert.map((ingre) => {
       return {
         dish_id,
         ingre_name: ingre,
