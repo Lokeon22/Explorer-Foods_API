@@ -129,9 +129,9 @@ class DishesController {
 
     const diskStorage = new DiskStorage();
 
-    const user = await knex("users").where({ id }).first();
+    const [user] = await knex("users").where({ id });
 
-    const dishes = await knex("dishes").where({ id }).first();
+    const [dishes] = await knex("dishes").where({ id: dish_id });
 
     if (user.is_admin === 0) {
       throw Error("Usuario sem permissão");
@@ -141,7 +141,7 @@ class DishesController {
 
     await knex("dishes").where({ id: dish_id }).del();
 
-    return res.json({ message: "Prato excluido" });
+    return res.json(user);
   }
 }
 
