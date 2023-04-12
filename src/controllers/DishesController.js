@@ -74,7 +74,7 @@ class DishesController {
 
     const ingredients = await knex("ingredients");
 
-    const allDisheWithIngre = allDishes.map((dish) => {
+    const [allDisheWithIngre] = allDishes.map((dish) => {
       const allIngre = ingredients.filter((ingre) => ingre.dish_id === dish.id);
       return {
         ...dish,

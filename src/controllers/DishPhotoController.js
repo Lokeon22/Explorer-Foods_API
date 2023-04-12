@@ -24,7 +24,7 @@ class DishPhotoController {
       image: filename,
     });
 
-    return res.json({ message: "Prato atualizado" });
+    return res.json(photoFile);
   }
 }
 
