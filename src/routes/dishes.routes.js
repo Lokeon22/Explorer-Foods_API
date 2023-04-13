@@ -22,6 +22,7 @@ dishesRoutes.patch(
 );
 dishesRoutes.get("/dishes/:categoria", dishesController.show);
 dishesRoutes.get("/dish/:id", dishesController.index);
+dishesRoutes.get("/alldishes", dishesController.search);
 dishesRoutes.put("/editdish/:dish_id", ensureAuth, dishesController.update);
 dishesRoutes.delete("/remove/:dish_id", ensureAuth, dishesController.delete);
 dishesRoutes.patch(

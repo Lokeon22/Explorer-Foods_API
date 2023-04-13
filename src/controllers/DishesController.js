@@ -85,6 +85,21 @@ class DishesController {
     return res.json(allDisheWithIngre);
   }
 
+  async search(req, res) {
+    const allDishes = await knex("dishes");
+    const ingredients = await knex("ingredients");
+
+    const allDisheWithIngre = allDishes.map((dish) => {
+      const allIngre = ingredients.filter((ingre) => ingre.dish_id === dish.id);
+      return {
+        ...dish,
+        allIngre,
+      };
+    });
+
+    return res.json(allDisheWithIngre);
+  }
+
   async update(req, res) {
     const { dish_id } = req.params;
     const { name, price, description, category, ingre_name } = req.body;
